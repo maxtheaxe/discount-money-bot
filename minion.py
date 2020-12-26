@@ -216,8 +216,11 @@ def checkout(driver, user_details):
 			(By.ID, "payment-submit-btn")))
 	except: # page didn't load in a reasonable amount of time
 		manual_takeover() # swap to manual mode
-	pp = driver.find_element_by_id("payment-submit-btn") # .click()
-	print("pp: ", pp) # dont want to actually check out during testing
+	# testing
+	# pp = driver.find_element_by_id("payment-submit-btn") # .click()
+	# print("pp: ", pp) # dont want to actually check out during testing
+	# real checkout
+	driver.find_element_by_id("payment-submit-btn").click()
 	return
 
 # manual_takeover() - for giving user control (just hangs program indefinitely lol)
