@@ -11,6 +11,7 @@ import chromedriver_autoinstaller as cda # makes it easier on inexperienced user
 import twint as tw # unofficial twit api of sorts, so ppl don't have to set up dev stuff
 from playsound import playsound # for notifying users; optional
 from datetime import datetime
+import time
 import random
 import signal
 import os
@@ -21,12 +22,34 @@ import sys
 # ref: https://stackoverflow.com/questions/41030257/is-there-a-way-to-bundle-a-binary-file-such-as-chromedriver-with-a-single-file
 current_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe() ))[0]))
 
+# collect_details() - collects user's checkout details
+def collect_details():
+	user_details = []
+	user_details.append(input("\tEnter your first name for checkout purposes\n\t(press Enter to continue)\n\n\t"))
+	user_details.append(input("\n\tEnter your last name for checkout purposes\n\t(press Enter to continue)\n\n\t"))
+	user_details.append(input("\n\tEnter your venmo username for checkout purposes\n\t(press Enter to continue)\n\n\t"))
+	user_details.append(input("\n\tEnter your email for checkout purposes\n\t(press Enter to continue)\n\n\t"))
+	# show details as confirmation
+	print("\n\tPlease confirm your details:\n")
+	print("\n\tFirst Name: ", user_details[0], "\n")
+	print("\n\tLast Name: ", user_details[1], "\n")
+	print("\n\tVenmo Username: ", user_details[2], "\n")
+	print("\n\tEmail Address: ", user_details[3], "\n")
+	check = input("\tAre these details correct?\n\t(press 'Y' to continue, or 'N' to retry, followed by [Enter])\n\n\t")
+	# well? are they right or not?
+	if (check.lower() == 'y'):
+		# they were correct, so save 'em
+		return user_details
+	else:
+		# they were wrong, re-collect 'em
+		return collect_details()
+
 # launch() - launch sequence to get driver started, bring to login page
 def launch(headless = False, signin_details = None):
 	driver = start_driver(headless) # start the driver and store it (will be returned)
 	# open paypal login page, to get setup for onetouch checkout later
 	driver.get("https://www.paypal.com/us/signin")
-	# wait until page loads
+	# wait until page loads (no need if not logging in automatically)
 	try: # loook for cookie button as indicator of load
 		wait = WebDriverWait(driver, 10)
 		element = wait.until(EC.element_to_be_clickable((By.ID, 'acceptAllButton')))
@@ -34,8 +57,9 @@ def launch(headless = False, signin_details = None):
 		driver.find_element_by_id("acceptAllButton").click()
 	except: # page didn't load in a reasonable amount of time
 		print("\n\tError: Page didn't load in a reasonable amount of time; try again.\n")
-		driver.quit() # close selenium driver
-		sys.exit() # close python program
+		# (no need if not logging in automatically)
+		# driver.quit() # close selenium driver
+		# sys.exit() # close python program
 	if (signin_details == None):
 		# notify user they have to sign in
 		print("\n\tPlease sign into PayPal via the browser window (click 'Log In').")
@@ -125,37 +149,98 @@ def buy_money(driver, lowest_amount = None, product_ids = None, specific_target 
 		# navigate to given url
 		driver.get(product_url)
 		# check if a product was successfully added
-		try:
+		try: # look for twitter button as indicator of load
+			wait = WebDriverWait(driver, 15)
+			element = wait.until(EC.element_to_be_clickable(
+			(By.XPATH, "//a[@href='https://twitter.com/tendmoney']")))
 			# check if there is a product button with text "Added"
-			driver.find_element_by_xpath("//a[contains(text(), 'Added')]")
+			driver.find_element_by_xpath("//a[contains(text(), 'Clear Cart')]")
 		except NoSuchElementException: # handle exception for xpath fail
 			if (i == (len(product_ids) - 1)): # if already looped over all denoms
 				# if there aren't six out of stock products listed, alert user
 				if (len(driver.find_elements_by_class_name("outofstock")) != 6):
 					# user needs to take over (probably issues with page loading)
 					# might add proper waits later if it's a major issue
-					# play notification sound 15 times
-					for i in range(15):
-						playsound(manual_notify.mp3)
+					manual_takeover() # swap to manual mode
+					return
 			continue # wasn't found, must already be sold out--skip to next-highest
 		# navigate to cart/checkout area
 		driver.get("https://discountmoneystore.com/cart/")
+		return
+
+# checkout() - check out with money
+def checkout(driver, user_details):
+	# wait until checkout page loads
+	try: # look for twitter button as indicator of load
+		wait = WebDriverWait(driver, 10)
+		element = wait.until(EC.element_to_be_clickable(
+			(By.XPATH, "//a[@href='https://twitter.com/tendmoney']")))
+	except: # page didn't load in a reasonable amount of time
+		manual_takeover() # swap to manual mode
+	# fill out checkout details
+	driver.find_element_by_id("billing_first_name").send_keys(user_details[0]) # first name
+	driver.find_element_by_id("billing_last_name").send_keys(user_details[1]) # last name
+	driver.find_element_by_id("ak_venmo").send_keys(user_details[2]) # venmo username
+	driver.find_element_by_id("billing_email").send_keys(user_details[3]) # email address
+	# switch to popup/new page (https://stackoverflow.com/a/29052586/4513452)
+	# try: # look for clear cart button as indicator of load
+	# 	wait = WebDriverWait(driver, 15)
+	# 	# not working even though i swear it's right
+	# 	# element = wait.until(EC.element_to_be_clickable(
+	# 	# 	(By.XPATH, '/html/body/div[1]/div/div[1]/div')))
+	# 	element = wait.until(EC.element_to_be_clickable(
+	# 		(By.XPATH, "//a[contains(text(), 'Clear Cart')]")))
+	# except: # page didn't load in a reasonable amount of time
+	# 	manual_takeover() # swap to manual mode
+	# driver.find_element_by_xpath('/html/body/div[1]/div/div[1]/div').click() # click pay
+	time.sleep(10) # i have no idea why this ^ shit doesn't work, f this
+	# this is so janky lol don't tell anyone
+	driver.find_element_by_id("billing_email").click() # click email address
+	driver.find_element_by_id("billing_email").send_keys(Keys.TAB) # tab over to paypal
+	ActionChains(driver).key_down(Keys.RETURN).key_up(Keys.RETURN).perform() # hit enter
+	# driver.find_element_by_xpath("/html").send_keys(Keys.RETURN) # hit enter on paypal
+	time.sleep(10)
+	# try: # look for overlay as indicator of load
+	# 	wait = WebDriverWait(driver, 15)
+	# 	element = wait.until(EC.element_to_be_clickable(
+	# 		(By.XPATH, "//a[contains(text(), 'Click to Continue')]")))
+	# except: # page didn't load in a reasonable amount of time
+	# 	manual_takeover() # swap to manual mode
+	main_window_handle = driver.window_handles[0] # get main window handle for later
+	paypal_window_handle = driver.window_handles[1] # get paypal popup handle
+	# print("pp handle: ", paypal_window_handle)
+	driver.switch_to.window(paypal_window_handle) # focus on popup
+	try: # look for final payment button as indicator of load
+		wait = WebDriverWait(driver, 25)
+		element = wait.until(EC.element_to_be_clickable(
+			(By.ID, "payment-submit-btn")))
+	except: # page didn't load in a reasonable amount of time
+		manual_takeover() # swap to manual mode
+	pp = driver.find_element_by_id("payment-submit-btn") # .click()
+	print("pp: ", pp) # dont want to actually check out during testing
 	return
 
-# load_from_file() - loads a list of links from file
-# ref: https://codippa.com/how-to-read-a-file-line-by-line-into-a-list-in-python/
-def load_from_file(file_name):
-	# open file in read mode
-	with open(file_name, 'r') as filename:
-		# read file content into list broken up by line (w/o newline chars)
-		lines = [line.rstrip() for line in filename]
-	return lines # return list of urls
+# manual_takeover() - for giving user control (just hangs program indefinitely lol)
+def manual_takeover():
+	count = 0
+	while(True):
+		count += 1
+		# do nothing, should have completed
+		if count == 1:
+			print("\n\tError: Something went wrong; take over from here.\n")
+			# play notification sound 15 times
+			for i in range(15):
+				# playsound(manual_notify.mp3)
+				print("manual takeover needed")
+	return
 
 def main():
 	# display title
 	print("\n\t--- Discount Money Bot by Max ---\n")
 	# warn users about using program
-	input("\tWarning: Use this program at your own risk!\n\t(press Enter to continue)\n\n\t")
+	input("\tWarning: Use this program at your own risk!\n\t(press Enter to continue)\n\t")
+	# collect users details
+	user_details = collect_details()
 	# start driver, have user sign into paypal onetouch, then save driver
 	driver = launch()
 	# define starting parameters
@@ -170,29 +255,16 @@ def main():
 	print("\n\tRestock Alert! Navigating to buy page...\n")
 	# go buy discount money
 	buy_money(driver)
-	# # create the driver (browser window) and keep track of it
-	# main_driver = launch()
-	# # if external list of URLs is provided
-	# if (args.urlfile != None):
-	# 	# then draw from there
-	# 	url_list = load_from_file(args.urlfile)
-	# 	# loop over list of URLs
-	# 	for i in range(len(url_list)):
-	# 		# if a custom page limit is provided
-	# 		if (args.pagelimit != None):
-	# 			# give awards to each in list with custom limit
-	# 			run_with_target(main_driver, url_list[i], max_pages = args.pagelimit)
-	# 		else: # otherwise use default
-	# 			# give awards to each in list
-	# 			run_with_target(main_driver, url_list[i])
-	# # otherwise, get links to reviews pages from user input
-	# else:
-	# 	while True:
-	# 		# if a custom page limit is provided
-	# 		if (args.pagelimit != None):
-	# 			run_with_target(main_driver, max_pages = args.pagelimit)
-	# 		else: # otherwise use default
-	# 			run_with_target(main_driver)
+	print("\n\tAdded some money to cart. Checking out...\n")
+	# go check out
+	checkout(driver, user_details)
+	count = 0
+	while(True):
+		count += 1
+		# do nothing, should have completed
+		if count == 1:
+			print("\n\tSuccessfully checked out. Please check window to verify...\n\t" +
+		"(you can close it afterwards)\n")
 
 if __name__ == '__main__':
 	main()
