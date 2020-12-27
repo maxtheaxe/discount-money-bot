@@ -16,7 +16,7 @@ _I might build standalone executables later_
 * Run `minion.py` (looks for restocks since the time it was launched)
 * Type in checkout details at launch
 * Log into PayPal in the browser when prompted
-* wait
+* let the bot handle the rest (see [demo video](https://youtu.be/YHFMMb7r71c) for normal operation)
 
 ## Disclaimers & Notes
 * Primarily: be considerate⁠—just buy something once
