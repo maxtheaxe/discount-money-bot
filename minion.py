@@ -251,9 +251,9 @@ def main():
 	restock_status = False
 	# keep checking twitter until a restock happens
 	print("\n\tChecking for restocks...\n")
-	# while (restock_status != True):
-	# 	restock_status, last_check_time = restock_checker(last_check_time)
-	# 	time.sleep(20) # wait twenty seconds
+	while (restock_status != True):
+		restock_status, last_check_time = restock_checker(last_check_time)
+		time.sleep(20) # wait twenty seconds
 	# restock happened, indicate as such in cli
 	print("\n\tRestock Alert! Navigating to buy page...\n")
 	# go buy discount money
