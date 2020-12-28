@@ -21,4 +21,5 @@ _I might build standalone executables later_
 ## Disclaimers & Notes
 * Primarily: be considerate⁠—just buy something once
 * Use at your own risk
+* Make sure your default PayPal payment method has enough money/credit available to make the purchase
 * Could _definitely_ be cleaned up, open to pull requests
