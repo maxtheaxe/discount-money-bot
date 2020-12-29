@@ -17,6 +17,7 @@ import signal
 import os
 import inspect
 import sys
+import random
 
 # set path to chrome driver for packaging purposes
 # ref: https://stackoverflow.com/questions/41030257/is-there-a-way-to-bundle-a-binary-file-such-as-chromedriver-with-a-single-file
@@ -134,6 +135,7 @@ def restock_checker(last_check_time = "2020-12-23 14:20:00"):
 	if (search_results != None): # restock happened -- some results
 		return True, last_check_time
 	else: # no restock happened -- None results
+		print("\n\tNo restock tweet found since ", last_check_time, "\n")
 		# only get new time if necessary to save (a tiny bit of) time
 		return False, get_formatted_time()
 
@@ -253,9 +255,10 @@ def main():
 	print("\n\tChecking for restocks...\n")
 	while (restock_status != True):
 		restock_status, last_check_time = restock_checker(last_check_time)
-		time.sleep(20) # wait twenty seconds
+		sleep_time = (2 + random.randint(0,15)) # sleep for anywhere between 20 and 35s
+		time.sleep(30) # wait thirty seconds
 	# restock happened, indicate as such in cli
-	print("\n\tRestock Alert! Navigating to buy page...\n")
+	print("\n\tRestock Alert! ", last_check_time, " Navigating to buy page...\n")
 	# go buy discount money
 	buy_money(driver)
 	print("\n\tAdded some money to cart. Checking out...\n")
