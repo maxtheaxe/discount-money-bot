@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 import chromedriver_autoinstaller as cda # makes it easier on inexperienced users
 import twint as tw # unofficial twit api of sorts, so ppl don't have to set up dev stuff
 from playsound import playsound # for notifying users; optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import random
 import signal
@@ -117,8 +117,11 @@ def start_driver(headless = False):
 # get_formatted_time() - return datetime with necessary twint formatting
 # ref: https://www.programiz.com/python-programming/datetime/current-time
 def get_formatted_time():
-	now = datetime.now()
-	current_time = now.strftime("%Y-%m-%d %H:%M:%S")
+	now = datetime.now() # time now
+	half_hour = ( now - timedelta(minutes = 30) ) # time 30 min ago
+	# returns half hour ago to accommodate for failed checks
+	# (bc twint behaves as if none found if check failed)
+	current_time = half_hour.strftime("%Y-%m-%d %H:%M:%S")
 	return current_time
 
 # restock_checker() - checks @tendmoney twitter for restock notifications
