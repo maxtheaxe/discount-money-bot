@@ -56,7 +56,7 @@ def launch(headless = False, signin_details = None):
 		element = wait.until(EC.element_to_be_clickable((By.ID, 'acceptAllButton')))
 		# accept cookies so we can actually stay logged in
 		driver.find_element_by_id("acceptAllButton").click()
-	except: # page didn't load in a reasonable amount of time
+	except NoSuchElementException: # page didn't load in a reasonable amount of time
 		print("\n\tError: Page didn't load in a reasonable amount of time; try again.\n")
 		# (no need if not logging in automatically)
 		# driver.quit() # close selenium driver
@@ -75,7 +75,7 @@ def launch(headless = False, signin_details = None):
 			(By.XPATH, "//a[contains(text(), 'Activate One Touch')]")))
 		# click activate button
 		driver.find_element_by_xpath("//a[contains(text(), 'Activate One Touch')]").click()
-	except: # page didn't load in a reasonable amount of time
+	except NoSuchElementException: # page didn't load in a reasonable amount of time
 		print("\n\tError: Page didn't load in a reasonable amount of time; try again.\n")
 		driver.quit() # close selenium driver
 		sys.exit() # close python program
@@ -89,7 +89,7 @@ def launch(headless = False, signin_details = None):
 		wait = WebDriverWait(driver, 10)
 		element = wait.until(EC.element_to_be_clickable(
 			(By.XPATH, "//a[contains(text(), 'Go to My Account')]")))
-	except: # page didn't load in a reasonable amount of time
+	except NoSuchElementException: # page didn't load in a reasonable amount of time
 		print("\n\tError: Page didn't load in a reasonable amount of time; try again.\n")
 		driver.quit() # close selenium driver
 		sys.exit() # close python program
@@ -180,7 +180,7 @@ def checkout(driver, user_details):
 		wait = WebDriverWait(driver, 10)
 		element = wait.until(EC.element_to_be_clickable(
 			(By.XPATH, "//a[@href='https://twitter.com/tendmoney']")))
-	except: # page didn't load in a reasonable amount of time
+	except NoSuchElementException: # page didn't load in a reasonable amount of time
 		manual_takeover() # swap to manual mode
 	# fill out checkout details
 	driver.find_element_by_id("billing_first_name").send_keys(user_details[0]) # first name
@@ -219,7 +219,7 @@ def checkout(driver, user_details):
 		wait = WebDriverWait(driver, 25)
 		element = wait.until(EC.element_to_be_clickable(
 			(By.ID, "payment-submit-btn")))
-	except: # page didn't load in a reasonable amount of time
+	except NoSuchElementException: # page didn't load in a reasonable amount of time
 		manual_takeover() # swap to manual mode
 	# testing
 	# pp = driver.find_element_by_id("payment-submit-btn") # .click()
