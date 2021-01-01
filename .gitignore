@@ -1,2 +1,9 @@
-chromedriver.exe
-geckodriver.exe
+*.exe
+*.mp3
+*.[l]og
+*.[b]ackup
+*.pyc
+
+.venv
+
+.idea
