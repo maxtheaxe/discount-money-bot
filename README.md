@@ -55,7 +55,7 @@ Snag the best deals from [@tendmoney](https://twitter.com/tendmoney)'s [popup sh
 
 ## Disclaimers & Notes #
 
-- Be considerate only make a single purchase.
+- Be considerate: only make a single purchase.
 - Use at your own risk.
 - Make sure your default PayPal payment method has enough money/credit available to make the purchase.
 - Could _definitely_ be cleaned up, open to pull requests.
