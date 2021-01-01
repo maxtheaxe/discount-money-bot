@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="Git4Idea" />
+    <plugin id="HtmlTools" />
+    <plugin id="Pythonid" />
+    <plugin id="com.almightyalpaca.intellij.plugins.discord" />
+    <plugin id="com.intellij.configurationScript" />
+    <plugin id="com.intellij.copyright" />
+    <plugin id="com.intellij.css" />
+    <plugin id="com.intellij.diagram" />
+    <plugin id="com.intellij.properties" />
+    <plugin id="com.jetbrains.pycharm.pro.customization" />
+    <plugin id="net.antelle.intellij-xcode-dark-theme" />
+    <plugin id="net.seesharpsoft.intellij.plugins.csv" />
+    <plugin id="one.util.ideaplugin.screenshoter" />
+    <plugin id="org.jetbrains.plugins.yaml" />
+    <plugin id="org.jetbrains.settingsRepository" />
+    <plugin id="org.toml.lang" />
+    <plugin id="ru.adelf.idea.dotenv" />
+    <plugin id="ru.meanmail.plugin.pyannotations" />
+  </component>
+</project>
