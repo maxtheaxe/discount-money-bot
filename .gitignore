@@ -3,3 +3,5 @@
 *.[l]og
 *.[b]ackup
 *.pyc
+
+.venv
