@@ -9,7 +9,7 @@ Snag the best deals from [@tendmoney](https://twitter.com/tendmoney)'s [popup sh
 
 ## Technologies ##
 
-- [Python 3.6+](https://www.python.org/downloads/)
+- [Python 3.8+](https://www.python.org/downloads/)
 - [Selenium](https://selenium-python.readthedocs.io)
 - [Twint](https://pypi.org/project/twint/)
 
