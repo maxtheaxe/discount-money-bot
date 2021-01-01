@@ -39,14 +39,23 @@ Snag the best deals from [@tendmoney](https://twitter.com/tendmoney)'s [popup sh
         python -m pip install --requirement Dependencies
         ```
 
-## Usage
-* Run `minion.py` (looks for restocks since the time it was launched)
-* Type in checkout details at launch
-* Log into PayPal in the browser when prompted
-* let the bot handle the rest (see [demo video](https://youtu.be/YHFMMb7r71c) for normal operation)
+## Usage ##
 
-## Disclaimers & Notes
-* Primarily: be considerate⁠—just buy something once
-* Use at your own risk
-* Make sure your default PayPal payment method has enough money/credit available to make the purchase
-* Could _definitely_ be cleaned up, open to pull requests
+### Linux ###
+
+ ```bash
+ python3 -m Bot
+ ```
+
+### Windows 10 ###
+
+ ```powershell
+ python -m Bot
+ ```
+
+## Disclaimers & Notes #
+
+- Be considerate only make a single purchase.
+- Use at your own risk.
+- Make sure your default PayPal payment method has enough money/credit available to make the purchase.
+- Could _definitely_ be cleaned up, open to pull requests.
